@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 موقع الألغاز - تحدى عقلك</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: bold;
+            min-width: 120px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+        }
+
+        .difficulty-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .difficulty-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .difficulty-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .difficulty-btn.easy {
+            background: linear-gradient(135deg, #84fab0, #8fd3f4);
+        }
+
+        .difficulty-btn.medium {
+            background: linear-gradient(135deg, #ffd89b, #19547b);
+        }
+
+        .difficulty-btn.hard {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .difficulty-btn.expert {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .difficulty-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .difficulty-btn.active {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255,255,255,0.5);
+        }
+
+        .riddle-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .riddle-type {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .riddle-text {
+            font-size: 1.4em;
+            line-height: 1.6;
+            margin: 20px 0;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 3px solid #e2e8f0;
+            border-radius: 12px;
+            margin: 20px 0;
+            transition: all 0.3s;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        .btn-check {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-hint {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .btn-skip {
+            background: linear-gradient(135deg, #ffd89b, #19547b);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .feedback.wrong {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        .hint-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .hint-box.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            height: 10px;
+            border-radius: 10px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .riddle-text {
+                font-size: 1.2em;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 موقع الألغاز</h1>
+            <p style="color: #718096; font-size: 1.1em; margin-top: 10px;">تحدى عقلك مع أفضل الألغاز</p>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">النقاط</div>
+                    <div class="stat-value" id="score">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">الألغاز المحلولة</div>
+                    <div class="stat-value" id="solved">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">المستوى</div>
+                    <div class="stat-value" id="level">1</div>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="difficulty-selector">
+            <h3 style="margin-bottom: 10px; color: #2d3748;">اختر مستوى الصعوبة:</h3>
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn easy active" onclick="setDifficulty('easy')">
+                    😊 سهل
+                </button>
+                <button class="difficulty-btn medium" onclick="setDifficulty('medium')">
+                    🤔 متوسط
+                </button>
+                <button class="difficulty-btn hard" onclick="setDifficulty('hard')">
+                    😤 صعب
+                </button>
+                <button class="difficulty-btn expert" onclick="setDifficulty('expert')">
+                    🧠 خبير
+                </button>
+            </div>
+        </div>
+
+        <div class="riddle-card" id="riddleCard">
+            <span class="riddle-type" id="riddleType">لغز منطقي</span>
+            <div class="riddle-text" id="riddleText">جاري التحميل...</div>
+            
+            <input type="text" class="answer-input" id="answerInput" placeholder="اكتب إجابتك هنا...">
+            
+            <div class="buttons">
+                <button class="btn btn-check" onclick="checkAnswer()">✓ تحقق من الإجابة</button>
+                <button class="btn btn-hint" onclick="showHint()">💡 تلميح</button>
+                <button class="btn btn-skip" onclick="nextRiddle()">⏭ التالي</button>
+            </div>
+
+            <div class="hint-box" id="hintBox"></div>
+            <div class="feedback" id="feedback"></div>
+        </div>
+    </div>
+
+    <script>
+        // نظام الإدارة والمستخدمين
+        let currentUser = {
+            id: 'user_' + Date.now(),
+            username: '',
+            isAdmin: false,
+            isBanned: false,
+            suspicionLevel: 0,
+            loginTime: Date.now()
+        };
+
+        let adminData = {
+            users: [],
+            suspiciousActivities: [],
+            bannedUsers: []
+        };
+
+        // تحميل البيانات من localStorage
+        function loadData() {
+            const saved = localStorage.getItem('riddlesAdminData');
+            if (saved) {
+                adminData = JSON.parse(saved);
+            }
+            
+            const savedUser = localStorage.getItem('currentRiddleUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+            }
+        }
+
+        // حفظ البيانات
+        function saveData() {
+            localStorage.setItem('riddlesAdminData', JSON.stringify(adminData));
+            localStorage.setItem('currentRiddleUser', JSON.stringify(currentUser));
+        }
+
+        // كشف الذكاء الاصطناعي
+        let answerTimes = [];
+        let lastAnswerTime = 0;
+
+        function detectAI(isCorrect, timeTaken) {
+            let suspicion = 0;
+            
+            // إجابات سريعة جداً
+            if (timeTaken < 2000 && isCorrect) {
+                suspicion += 30;
+            }
+            
+            // إجابات متتالية بنفس السرعة
+            answerTimes.push(timeTaken);
+            if (answerTimes.length > 3) {
+                answerTimes.shift();
+                const avgTime = answerTimes.reduce((a, b) => a + b) / answerTimes.length;
+                const variance = answerTimes.reduce((sum, t) => sum + Math.abs(t - avgTime), 0) / answerTimes.length;
+                
+                if (variance < 500 && avgTime < 3000) {
+                    suspicion += 25;
+                }
+            }
+            
+            // معدل نجاح عالي جداً
+            if (solved > 10 && (solved / (solved + 1)) > 0.9) {
+                suspicion += 20;
+            }
+            
+            currentUser.suspicionLevel += suspicion;
+            
+            if (currentUser.suspicionLevel > 50) {
+                reportSuspiciousActivity('احتمال استخدام AI - سرعة وإجابات غير طبيعية');
+            }
+            
+            saveData();
+        }
+
+        function reportSuspiciousActivity(reason) {
+            adminData.suspiciousActivities.push({
+                userId: currentUser.id,
+                username: currentUser.username || 'مجهول',
+                reason: reason,
+                suspicionLevel: currentUser.suspicionLevel,
+                time: new Date().toLocaleString('ar-SA'),
+                score: score,
+                solved: solved
+            });
+            saveData();
+        }
+
+        // مجموعة الألغاز
+        const riddles = {
+            easy: [
+                {
+                    type: "لغز كلاسيكي",
+                    question: "ما هو الشيء الذي يمشي بلا أرجل ويبكي بلا عيون؟",
+                    answer: ["السحاب", "الغيم", "سحاب", "غيم"],
+                    hint: "ينزل منه المطر ☁️"
+                },
+                {
+                    type: "لغز شعبي",
+                    question: "له رأس ولا عين له، وهي لها عين ولا رأس لها. ما هما؟",
+                    answer: ["الدبوس والإبرة", "دبوس وإبرة", "الدبوس وابرة", "دبوس وابرة"],
+                    hint: "يستخدمان في الخياطة 🪡"
+                },
+                {
+                    type: "لغز رياضي",
+                    question: "إذا كان عمر أحمد الآن 10 سنوات، كم كان عمره قبل 5 سنوات؟",
+                    answer: ["5", "خمسة", "خمس سنوات", "5 سنوات"],
+                    hint: "10 - 5 = ؟"
+                },
+                {
+                    type: "لغز منطقي",
+                    question: "ما هو الشيء الذي كلما زاد نقص؟",
+                    answer: ["العمر", "عمر", "السن", "سن"],
+                    hint: "يتعلق بحياة الإنسان ⏳"
+                },
+                {
+                    type: "لغز كلاسيكي",
+                    question: "أنا موجود في النهار ثلاث مرات وفي الليل مرة واحدة، من أنا؟",
+                    answer: ["حرف ا", "الألف", "حرف الألف", "ا"],
+                    hint: "فكر في الحروف 📝"
+                }
+            ],
+            medium: [
+                {
+                    type: "لغز ذكاء",
+                    question: "رجل له 5 بنات، وكل بنت لها أخ واحد. كم عدد أطفال الرجل؟",
+                    answer: ["6", "ستة", "6 أطفال", "ستة أطفال"],
+                    hint: "الأخ واحد لجميع البنات 👨‍👧‍👦"
+                },
+                {
+                    type: "لغز رياضي",
+                    question: "إذا كانت 5 قطط تصطاد 5 فئران في 5 دقائق، كم قطة نحتاج لاصطياد 100 فأر في 100 دقيقة؟",
+                    answer: ["5", "خمسة", "5 قطط", "خمس قطط"],
+                    hint: "المعدل ثابت لكل قطة 🐱"
+                },
+                {
+                    type: "لغز منطقي",
+                    question: "ما هو الشيء الذي إذا أخذت منه كبر وإذا أضفت إليه صغر؟",
+                    answer: ["الحفرة", "حفرة", "الحفر"],
+                    hint: "شيء في الأرض ⛏️"
+                },
+                {
+                    type: "لغز كلمات",
+                    question: "كلمة من 4 حروف، إذا أكلت واحد منها جعت، وإذا أكلت اثنين شبعت، وإذا أكلت ثلاثة مت؟",
+                    answer: ["خبز", "الخبز"],
+                    hint: "طعام أساسي 🍞"
+                },
+                {
+                    type: "لغز رياضي",
+                    question: "ما هو الرقم الذي إذا ضربته في نفسه وأضفت إليه 5 أصبح 30؟",
+                    answer: ["5", "خمسة"],
+                    hint: "فكر في الأعداد الصغيرة 🔢"
+                }
+            ],
+            hard: [
+                {
+                    type: "لغز تحليلي",
+                    question: "في غرفة 3 مصابيح، وخارج الغرفة 3 مفاتيح. كل مفتاح لمصباح واحد. كيف تعرف أي مفتاح لأي مصباح بدخول الغرفة مرة واحدة فقط؟",
+                    answer: ["اشغل الأول فترة ثم اطفيه واشغل الثاني", "تشغيل الأول ثم إطفاؤه وتشغيل الثاني", "شغل واحد فترة طويلة"],
+                    hint: "استخدم الحرارة والضوء معاً 💡"
+                },
+                {
+                    type: "لغز رياضي",
+                    question: "عدد إذا ضربته في 4 ثم طرحت من الناتج 6 ثم قسمت الناتج على 2 حصلت على 11، ما هو العدد؟",
+                    answer: ["7", "سبعة"],
+                    hint: "ابدأ من النهاية للبداية 🔄"
+                },
+                {
+                    type: "لغز منطقي",
+                    question: "أنا بداية الموت ونهاية المرض، أنا نهاية الحياة وبداية الحزن. من أنا؟",
+                    answer: ["حرف الميم", "الميم", "حرف م", "م"],
+                    hint: "انظر للحروف في الكلمات 📖"
+                },
+                {
+                    type: "لغز ذكاء",
+                    question: "رجل يقف أمام لوحة ويقول: ليس لي أخوة ولا أخوات، لكن أبو هذا الرجل هو ابن أبي. من في اللوحة؟",
+                    answer: ["ابنه", "ابن الرجل", "ابن", "الابن"],
+                    hint: "فكر في العلاقات العائلية 👨‍👦"
+                },
+                {
+                    type: "لغز تحليلي",
+                    question: "صندوق به تفاح وبرتقال. إذا أخذت تفاحتين، كم تفاحة معك؟",
+                    answer: ["2", "تفاحتان", "اثنتان", "تفاحتين"],
+                    hint: "السؤال أبسط مما تظن 🍎"
+                }
+            ],
+            expert: [
+                {
+                    type: "لغز احترافي",
+                    question: "ثلاثة آلهة يجيبون بنعم أو لا، أحدهم صادق دائماً، والثاني كاذب دائماً، والثالث عشوائي. بسؤالين فقط، كيف تعرف من هو من؟",
+                    answer: ["سؤال مركب عن ما سيقوله الآخر", "استخدام أسئلة غير مباشرة", "سؤال احتمالي"],
+                    hint: "استخدم المنطق الرياضي والأسئلة المركبة 🧩"
+                },
+                {
+                    type: "لغز رياضي معقد",
+                    question: "عندي عدد من 3 أرقام. الرقم الأول ضعف الثالث، مجموع الأرقام 12، والعدد فردي. ما هو؟",
+                    answer: ["525", "خمسمائة وخمسة وعشرون"],
+                    hint: "جرب أعداد فردية تبدأ بـ 5 🎯"
+                },
+                {
+                    type: "لغز منطقي",
+                    question: "في قطار يسير بسرعة 60 كم/س، رجل يمشي داخله بسرعة 6 كم/س بعكس اتجاه القطار. ما سرعة الرجل بالنسبة للأرض؟",
+                    answer: ["54", "54 كم/س", "أربعة وخمسون"],
+                    hint: "اطرح السرعتين 🚂"
+                },
+                {
+                    type: "لغز استنتاجي",
+                    question: "في جزيرة، نصف السكان يقولون الحقيقة دائماً، والنصف الآخر يكذب دائماً. قابلت شخصاً قال: 'أنا كاذب'. هل هذا ممكن؟",
+                    answer: ["لا", "مستحيل", "غير ممكن", "لا يمكن"],
+                    hint: "فكر في التناقض المنطقي 🤯"
+                },
+                {
+                    type: "لغز رياضي",
+                    question: "عدد إذا قسمته على 2 وأضفت 10 ثم ضربت في 3 ثم طرحت 6 حصلت على 60. ما العدد؟",
+                    answer: ["8", "ثمانية"],
+                    hint: "عكس العمليات من النهاية 🔢"
+                }
+            ]
+        };
+
+        let currentDifficulty = 'easy';
+        let currentRiddle = null;
+        let score = 0;
+        let solved = 0;
+        let level = 1;
+        let hintsUsed = 0;
+        let riddlesSolved = 0;
+
+        function setDifficulty(difficulty) {
+            currentDifficulty = difficulty;
+            
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            nextRiddle();
+        }
+
+        function getRandomRiddle() {
+            const difficultyRiddles = riddles[currentDifficulty];
+            return difficultyRiddles[Math.floor(Math.random() * difficultyRiddles.length)];
+        }
+
+        function nextRiddle() {
+            currentRiddle = getRandomRiddle();
+            document.getElementById('riddleType').textContent = currentRiddle.type;
+            document.getElementById('riddleText').textContent = currentRiddle.question;
+            document.getElementById('answerInput').value = '';
+            document.getElementById('hintBox').classList.remove('show');
+            document.getElementById('feedback').classList.remove('show');
+            hintsUsed = 0;
+        }
+
+        function showHint() {
+            if (score < 5) {
+                alert('❌ تحتاج 5 نقاط على الأقل للحصول على تلميح!');
+                return;
+            }
+            
+            const hintBox = document.getElementById('hintBox');
+            hintBox.textContent = '💡 ' + currentRiddle.hint + ' (-5 نقاط)';
+            hintBox.classList.add('show');
+            hintsUsed++;
+            
+            // خصم 5 نقاط عند استخدام التلميح
+            score -= 5;
+            updateStats();
+        }
+
+        function checkAnswer() {
+            // فحص البان
+            if (currentUser.isBanned) {
+                alert('🚫 تم حظرك من اللعب!');
+                return;
+            }
+            
+            const answerTime = Date.now();
+            const timeTaken = lastAnswerTime ? answerTime - lastAnswerTime : 5000;
+            
+            const userAnswer = document.getElementById('answerInput').value.trim().toLowerCase();
+            const feedback = document.getElementById('feedback');
+            
+            const isCorrect = currentRiddle.answer.some(ans => 
+                userAnswer === ans.toLowerCase() || userAnswer.includes(ans.toLowerCase())
+            );
+
+            // كشف AI
+            detectAI(isCorrect, timeTaken);
+
+            if (isCorrect) {
+                feedback.textContent = '🎉 ممتاز! إجابة صحيحة!';
+                feedback.className = 'feedback correct show';
+                
+                let points = 10;
+                if (currentDifficulty === 'medium') points = 20;
+                if (currentDifficulty === 'hard') points = 30;
+                if (currentDifficulty === 'expert') points = 50;
+                
+                score += points;
+                solved++;
+                riddlesSolved++;
+                
+                if (riddlesSolved % 5 === 0) {
+                    level++;
+                }
+                
+                updateStats();
+                saveData();
+                
+                setTimeout(nextRiddle, 2000);
+            } else {
+                feedback.textContent = '❌ للأسف، حاول مرة أخرى!';
+                feedback.className = 'feedback wrong show';
+            }
+            
+            lastAnswerTime = Date.now();
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('solved').textContent = solved;
+            document.getElementById('level').textContent = level;
+            
+            const progress = (riddlesSolved % 5) * 20;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        document.getElementById('answerInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // تحميل أول لغز
+        loadData();
+        nextRiddle();
+    </script>
+
+    <!-- لوحة الإدارة -->
+    <div id="adminPanel" style="display: none;">
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; overflow-y: auto;">
+            <div style="max-width: 1200px; margin: 20px auto; background: white; border-radius: 20px; padding: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2 style="color: #667eea;">🛡️ لوحة التحكم الإدارية</h2>
+                    <button onclick="closeAdmin()" style="padding: 10px 20px; background: #f56565; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">✕ إغلاق</button>
+                </div>
+
+                <!-- إحصائيات عامة -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 2em; font-weight: bold;" id="totalUsers">0</div>
+                        <div>إجمالي المستخدمين</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 2em; font-weight: bold;" id="suspiciousCount">0</div>
+                        <div>نشاطات مشبوهة</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #ffd89b, #19547b); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 2em; font-weight: bold;" id="bannedCount">0</div>
+                        <div>محظورين</div>
+                    </div>
+                </div>
+
+                <!-- نظام الحماية -->
+                <div style="background: #fff3cd; border: 2px solid #ffc107; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="color: #856404; margin-bottom: 15px;">⚠️ نظام الحماية - كشف الذكاء الاصطناعي</h3>
+                    <div id="suspiciousActivities" style="max-height: 300px; overflow-y: auto;">
+                        <p style="color: #856404;">لا توجد نشاطات مشبوهة</p>
+                    </div>
+                </div>
+
+                <!-- إدارة المستخدمين -->
+                <div style="background: #f7fafc; border-radius: 12px; padding: 20px;">
+                    <h3 style="color: #2d3748; margin-bottom: 15px;">👥 إدارة المستخدمين</h3>
+                    <div id="usersList" style="max-height: 400px; overflow-y: auto;">
+                        <p style="color: #718096;">لا يوجد مستخدمين</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- زر الإدارة -->
+    <div style="position: fixed; bottom: 20px; left: 20px; z-index: 999;">
+        <button id="adminBtn" onclick="checkAdminAccess()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 15px 25px; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: none;">
+            🛡️ الإدارة
+        </button>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = 'admin123';
+
+        function checkAdminAccess() {
+            const password = prompt('🔐 أدخل كلمة سر المدير:');
+            if (password === ADMIN_PASSWORD) {
+                currentUser.isAdmin = true;
+                openAdminPanel();
+            } else {
+                alert('❌ كلمة سر خاطئة!');
+                reportSuspiciousActivity('محاولة دخول غير مصرح بها للوحة الإدارة');
+            }
+        }
+
+        function openAdminPanel() {
+            document.getElementById('adminPanel').style.display = 'block';
+            loadAdminData();
+        }
+
+        function closeAdmin() {
+            document.getElementById('adminPanel').style.display = 'none';
+        }
+
+        function loadAdminData() {
+            document.getElementById('totalUsers').textContent = adminData.users.length || 1;
+            document.getElementById('suspiciousCount').textContent = adminData.suspiciousActivities.length;
+            document.getElementById('bannedCount').textContent = adminData.bannedUsers.length;
+
+            const suspiciousDiv = document.getElementById('suspiciousActivities');
+            if (adminData.suspiciousActivities.length === 0) {
+                suspiciousDiv.innerHTML = '<p style="color: #856404;">لا توجد نشاطات مشبوهة</p>';
+            } else {
+                let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+                adminData.suspiciousActivities.slice().reverse().forEach((activity) => {
+                    html += `
+                        <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #f5576c;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <strong style="color: #2d3748;">${activity.username} (${activity.userId.substr(0, 8)}...)</strong>
+                                <span style="color: #718096; font-size: 0.9em;">${activity.time}</span>
+                            </div>
+                            <div style="color: #e53e3e; margin-bottom: 5px;">⚠️ ${activity.reason}</div>
+                            <div style="color: #718096; font-size: 0.9em;">
+                                مستوى الشك: ${activity.suspicionLevel}% | النقاط: ${activity.score} | محلولة: ${activity.solved}
+                            </div>
+                            <button onclick="banUserById('${activity.userId}')" style="margin-top: 10px; padding: 8px 15px; background: #e53e3e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                                🚫 حظر
+                            </button>
+                            <button onclick="warnUser('${activity.userId}')" style="margin-top: 10px; margin-right: 10px; padding: 8px 15px; background: #ffa500; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+                                ⚠️ تحذير
+                            </button>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                suspiciousDiv.innerHTML = html;
+            }
+
+            displayUsersList();
+        }
+
+        function displayUsersList() {
+            const usersDiv = document.getElementById('usersList');
+            
+            if (!adminData.users.find(u => u.id === currentUser.id)) {
+                adminData.users.push({
+                    id: currentUser.id,
+                    username: currentUser.username || 'مستخدم ' + adminData.users.length,
+                    score: score,
+                    solved: solved,
+                    level: level,
+                    isBanned: currentUser.isBanned,
+                    suspicionLevel: currentUser.suspicionLevel
+                });
+            }
+
+            if (adminData.users.length === 0) {
+                usersDiv.innerHTML = '<p style="color: #718096;">لا يوجد مستخدمين</p>';
+            } else {
+                let html = '<div style="display: flex; flex-direction: column; gap: 10px;">';
+                adminData.users.forEach((user, index) => {
+                    const isBanned = adminData.bannedUsers.includes(user.id);
+                    const statusColor = isBanned ? '#e53e3e' : (user.suspicionLevel > 50 ? '#ffa500' : '#48bb78');
+                    const statusText = isBanned ? '🚫 محظور' : (user.suspicionLevel > 50 ? '⚠️ مشبوه' : '✅ عادي');
+                    
+                    html += `
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid ${statusColor};">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                <div>
+                                    <div style="font-weight: bold; color: #2d3748; margin-bottom: 5px;">
+                                        ${user.username || 'مستخدم ' + (index + 1)}
+                                        ${user.id === currentUser.id ? '(أنت)' : ''}
+                                    </div>
+                                    <div style="color: #718096; font-size: 0.9em;">
+                                        ID: ${user.id.substr(0, 12)}...
+                                    </div>
+                                    <div style="color: #718096; font-size: 0.9em; margin-top: 5px;">
+                                        النقاط: ${user.score || 0} | المستوى: ${user.level || 1} | محلولة: ${user.solved || 0}
+                                    </div>
+                                    <div style="color: ${statusColor}; font-weight: bold; margin-top: 5px;">
+                                        ${statusText} | مستوى الشك: ${user.suspicionLevel || 0}%
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 10px; flex-direction: column;">
+                                    ${!isBanned ? `
+                                        <button onclick="banUserById('${user.id}')" style="padding: 8px 15px; background: #e53e3e; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; white-space: nowrap;">
+                                            🚫 حظر
+                                        </button>
+                                        <button onclick="warnUser('${user.id}')" style="padding: 8px 15px; background: #ffa500; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; white-space: nowrap;">
+                                            ⚠️ تحذير
+                                        </button>
+                                    ` : `
+                                        <button onclick="unbanUser('${user.id}')" style="padding: 8px 15px; background: #48bb78; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; white-space: nowrap;">
+                                            ✅ إلغاء الحظر
+                                        </button>
+                                    `}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                usersDiv.innerHTML = html;
+            }
+        }
+
+        function banUserById(userId) {
+            if (confirm('هل أنت متأكد من حظر هذا المستخدم؟')) {
+                if (!adminData.bannedUsers.includes(userId)) {
+                    adminData.bannedUsers.push(userId);
+                }
+                
+                if (userId === currentUser.id) {
+                    currentUser.isBanned = true;
+                    alert('⛔ تم حظرك من اللعب!');
+                }
+                
+                saveData();
+                loadAdminData();
+                alert('✅ تم حظر المستخدم بنجاح');
+            }
+        }
+
+        function unbanUser(userId) {
+            adminData.bannedUsers = adminData.bannedUsers.filter(id => id !== userId);
+            
+            if (userId === currentUser.id) {
+                currentUser.isBanned = false;
+            }
+            
+            saveData();
+            loadAdminData();
+            alert('✅ تم إلغاء حظر المستخدم');
+        }
+
+        function warnUser(userId) {
+            const message = prompt('أدخل رسالة التحذير:');
+            if (message) {
+                if (userId === currentUser.id) {
+                    alert('⚠️ تحذير من الإدارة:\n\n' + message);
+                }
+                adminData.suspiciousActivities.push({
+                    userId: userId,
+                    username: 'تحذير إداري',
+                    reason: 'تحذير: ' + message,
+                    suspicionLevel: 0,
+                    time: new Date().toLocaleString('ar-SA'),
+                    score: 0,
+                    solved: 0
+                });
+                saveData();
+                loadAdminData();
+            }
+        }
+
+        // تفعيل زر الإدارة
+        let adminClicks = 0;
+        let adminClickTimer;
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                document.getElementById('adminBtn').style.display = 'block';
+            }
+        });
+
+        // الضغط 5 مرات على رابط الموقع (العنوان الرئيسي)
+        document.querySelector('.header h1').addEventListener('click', function(e) {
+            e.preventDefault();
+            adminClicks++;
+            clearTimeout(adminClickTimer);
+            
+            if (adminClicks >= 5) {
+                document.getElementById('adminBtn').style.display = 'block';
+                adminClicks = 0;
+                alert('🛡️ تم تفعيل زر الإدارة! اضغط على الزر الأزرق تحت يسار الشاشة');
+            } else {
+                // عرض عداد مؤقت للمستخدم
+                const remaining = 5 - adminClicks;
+                console.log(`بقي ${remaining} نقرات لتفعيل لوحة الإدارة`);
+            }
+            
+            adminClickTimer = setTimeout(() => {
+                adminClicks = 0;
+            }, 2000);
+        });
+        
+        // إضافة مؤشر يد على العنوان ليعرف المستخدم أنه قابل للنقر
+        document.querySelector('.header h1').style.cursor = 'pointer';
+    
+    </script>
+</body>
+</html>
